@@ -9,9 +9,8 @@ import pandas as pd
 import os.path
 from os import path
 
-# # # Mariana's code histogram normalization - https://github.com/sergivalverde/MRI_intensity_normalization 
 # # =============================================================================
-# # USING ALL DATA TO TRAIN HIST NORM
+# # USING ALL DATA TO TRAIN HIST NORM - uncomment so save the images in folder
 # # =============================================================================
 
 # # #FOR T1
@@ -159,7 +158,7 @@ axs[1].set_title('Image T1 Normalized')
 
 
 # #=============================================================================
-# # Using only one image as reference
+# # Using only one image as reference - uncomment so save the images in folder
 # #=============================================================================
 # # For PET 
 # os.chdir("C:/Users/helen/Desktop/dataset_PET-MR/ForHelena_20210602/original_data_brain/controls/pet")
