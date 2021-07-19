@@ -59,53 +59,53 @@ import torchvision
 
 
 
-#FOR PATIENTS - might need to normalise it in respect to the controls 
+# #FOR PATIENTS - might need to normalise it in respect to the controls 
 
-dir_images="C:/Users/helen/Desktop/dataset_PET-MR/Nonlin-affine-MNI_1mm/controls/t1/"
-img_dir = os.listdir(dir_images)
-dir_list=[]
+# dir_images="C:/Users/helen/Desktop/dataset_PET-MR/Nonlin-affine-MNI_1mm/controls/t1/"
+# img_dir = os.listdir(dir_images)
+# dir_list=[]
 
-#patients data to normalize
-dir_images_save="C:/Users/helen/Desktop/dataset_PET-MR/Nonlin-affine-MNI_1mm/patients/t1/"
+# #patients data to normalize
+# dir_images_save="C:/Users/helen/Desktop/dataset_PET-MR/Nonlin-affine-MNI_1mm/patients/t1/"
 
-for i in range(len(img_dir)):
-    im = dir_images + str(img_dir[i])
-    dir_list.append(im)
+# for i in range(len(img_dir)):
+#     im = dir_images + str(img_dir[i])
+#     dir_list.append(im)
 
-standard_scale, perc = nyul_train_standard_scale(dir_list)
+# standard_scale, perc = nyul_train_standard_scale(dir_list)
 
 
-for filename in sorted(os.listdir(dir_images_save)):
-    img = dir_images_save + filename 
-    img = nib.load(img)
-    affine = img.affine # what is the affine in the image?? why is it needed? It is saved as nib image affine ?
-    img = np.asanyarray(img.dataobj)
-    img_norm = do_hist_normalization(img, perc, standard_scale) 
-    img_norm = img_norm/100
-    nib.save(nib.Nifti1Image(img_norm, affine), os.path.join('C:/Users/helen/Desktop/norm_data_1mm/patients/t1/', filename)) 
+# for filename in sorted(os.listdir(dir_images_save)):
+#     img = dir_images_save + filename 
+#     img = nib.load(img)
+#     affine = img.affine # what is the affine in the image?? why is it needed? It is saved as nib image affine ?
+#     img = np.asanyarray(img.dataobj)
+#     img_norm = do_hist_normalization(img, perc, standard_scale) 
+#     img_norm = img_norm/100
+#     nib.save(nib.Nifti1Image(img_norm, affine), os.path.join('C:/Users/helen/Desktop/norm_data_1mm/patients/t1/', filename)) 
 
-# FOR PET 
-dir_images="C:/Users/helen/Desktop/dataset_PET-MR/Nonlin-affine-MNI_1mm/controls/pet/"
-img_dir = os.listdir(dir_images)
-dir_list=[]
+# # FOR PET 
+# dir_images="C:/Users/helen/Desktop/dataset_PET-MR/Nonlin-affine-MNI_1mm/controls/pet/"
+# img_dir = os.listdir(dir_images)
+# dir_list=[]
 
-#patients data to normalize
-dir_images_save="C:/Users/helen/Desktop/dataset_PET-MR/Nonlin-affine-MNI_1mm/patients/pet/"
+# #patients data to normalize
+# dir_images_save="C:/Users/helen/Desktop/dataset_PET-MR/Nonlin-affine-MNI_1mm/patients/pet/"
 
-for i in range(len(img_dir)):
-    im = dir_images + str(img_dir[i])
-    dir_list.append(im)
+# for i in range(len(img_dir)):
+#     im = dir_images + str(img_dir[i])
+#     dir_list.append(im)
 
-standard_scale, perc = nyul_train_standard_scale(dir_list)
+# standard_scale, perc = nyul_train_standard_scale(dir_list)
 
-for filename in sorted(os.listdir(dir_images_save)):
-    img = dir_images_save + filename 
-    img = nib.load(img)
-    affine = img.affine
-    img = np.asanyarray(img.dataobj)
-    img_norm = do_hist_normalization(img, perc, standard_scale) 
-    img_norm = img_norm/100
-    nib.save(nib.Nifti1Image(img_norm, affine), os.path.join('C:/Users/helen/Desktop/norm_data_1mm/patients/pet/', filename))
+# for filename in sorted(os.listdir(dir_images_save)):
+#     img = dir_images_save + filename 
+#     img = nib.load(img)
+#     affine = img.affine
+#     img = np.asanyarray(img.dataobj)
+#     img_norm = do_hist_normalization(img, perc, standard_scale) 
+#     img_norm = img_norm/100
+#     nib.save(nib.Nifti1Image(img_norm, affine), os.path.join('C:/Users/helen/Desktop/norm_data_1mm/patients/pet/', filename))
 
 
 #### Dont need:
@@ -213,63 +213,57 @@ for filename in sorted(os.listdir(dir_images_save)):
 
 
 
-# Try get range 0-1 - modify nyul 
+# Try get range 0-1 - modify nyul to 0.05-0.95
 
-# #FOR T1
+#FOR T1
 
-# #normalized before
-# im_or_t1 = nib.load('C:/Users/helen/Desktop/dataset_PET-MR/Nonlin-affine-MNI_1mm/controls/t1/ASSMI_MNI_nonlin_1mm.nii.gz')
-# im_or_t1 = im_or_t1.get_fdata()
+#normalized before
+im_norm_t1 = nib.load('C:/Users/helen/Desktop/norm_data_1mm/patients/t1/mMR_BR1_002_MNI_nonlin_1mm.nii.gz')
+im_norm_t1 = im_norm_t1.get_fdata()
 
-# im_norm_t1 = nib.load('C:/Users/helen/Desktop/norm_data_1mm/controls/t1//ASSMI_MNI_nonlin_1mm.nii.gz')
-# im_norm_t1 = im_norm_t1.get_fdata()
-
-# dir_images="C:/Users/helen/Desktop/dataset_PET-MR/Nonlin-affine-MNI_1mm/controls/t1/"
-# img_dir = os.listdir(dir_images)
-# dir_list=[]
+dir_images="C:/Users/helen/Desktop/dataset_PET-MR/Nonlin-affine-MNI_1mm/controls/t1/"
+img_dir = os.listdir(dir_images)
+dir_list=[]
 
 
-# for i in range(len(img_dir)):
-#     im = dir_images + str(img_dir[i])
-#     dir_list.append(im)
+for i in range(len(img_dir)):
+    im = dir_images + str(img_dir[i])
+    dir_list.append(im)
 
-# standard_scale, perc = nyul_train_standard_scale(dir_list)
-
-
-# img = dir_images + 'ASSMI_MNI_nonlin_1mm.nii.gz' 
-# img = nib.load(img)
-# img = np.asanyarray(img.dataobj)
-# img_norm = do_hist_normalization(img, perc, standard_scale) 
-# img_norm = img_norm /100 
-
-# #plot images:
-# fig= plt.figure()
-# ax = fig.add_subplot(1, 3, 1)
-# plt.imshow(img_norm[:,:,90])
-# ax.set_title('T1 new norm')
-# ax.get_xaxis().set_visible(False)
-# ax.get_yaxis().set_visible(False)
-# ax = fig.add_subplot(1, 3, 2)
-# plt.imshow(im_norm_t1[:,:,90])
-# ax.set_title('T1 before norm')
-# ax.get_xaxis().set_visible(False)
-# ax.get_yaxis().set_visible(False)
-# ax = fig.add_subplot(1, 3, 3)
-# plt.imshow(im_or_t1[:,:,90])
-# ax.set_title('T1 original')
-# ax.get_xaxis().set_visible(False)
-# ax.get_yaxis().set_visible(False)
+standard_scale, perc = nyul_train_standard_scale(dir_list)
 
 
-# # plot histogram before and after: 
-# fig, axs = plt.subplots(3, 1, constrained_layout=True)
-# f1 = axs[0].hist(img_norm.flatten(), bins=64, range=(np.min(img_norm),np.max(img_norm)))
-# f2 = axs[1].hist(im_norm_t1.flatten(), bins=64, range=(np.min(im_norm_t1),np.max(im_norm_t1)))
-# f3 = axs[2].hist(im_or_t1.flatten(), bins=64, range=(np.min(im_or_t1),np.max(im_or_t1)))
-# axs[0].set_title('Image T1 new norm')
-# axs[1].set_title('Image T1 before Norm')
-# axs[2].set_title('Image T1 original')
-   
+img = "C:/Users/helen/Desktop/dataset_PET-MR/Nonlin-affine-MNI_1mm/patients/t1/" + 'mMR_BR1_002_MNI_nonlin_1mm.nii.gz' 
+img = nib.load(img)
+affine = img.affine
+img = np.asanyarray(img.dataobj)
+img_norm = do_hist_normalization(img, perc, standard_scale) 
+nib.save(nib.Nifti1Image(img_norm, affine), os.path.join('C:/Users/helen/Desktop/hist_norm_new_range/', 'mMR_BR1_002_t1_new_range.nii.gz'))
+
+
+#plot images:
+fig= plt.figure()
+ax = fig.add_subplot(1, 2, 1)
+plt.imshow(img_norm[:,:,90])
+ax.set_title('T1 new norm')
+ax.get_xaxis().set_visible(False)
+ax.get_yaxis().set_visible(False)
+ax = fig.add_subplot(1, 2, 2)
+plt.imshow(im_norm_t1[:,:,90])
+ax.set_title('T1 old norm')
+ax.get_xaxis().set_visible(False)
+ax.get_yaxis().set_visible(False)
+
+
+# plot histogram before and after: 
+fig, axs = plt.subplots(2, 1, constrained_layout=True)
+f1 = axs[0].hist(img_norm.flatten(), bins=64, range=(np.min(img_norm),np.max(img_norm)))
+f2 = axs[1].hist(im_norm_t1.flatten(), bins=64, range=(np.min(im_norm_t1),np.max(im_norm_t1)))
+axs[0].set_title('Image T1 new norm')
+axs[1].set_title('Image T1 old Norm')
+
+
+
 # #=============================================================================
 # # Using only one image as reference - uncomment so save the images in folder
 # #=============================================================================
