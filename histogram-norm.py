@@ -238,6 +238,7 @@ img = nib.load(img)
 affine = img.affine
 img = np.asanyarray(img.dataobj)
 img_norm = do_hist_normalization(img, perc, standard_scale) 
+img_norm = img_norm/100
 nib.save(nib.Nifti1Image(img_norm, affine), os.path.join('C:/Users/helen/Desktop/hist_norm_new_range/', 'mMR_BR1_002_t1_new_range.nii.gz'))
 
 
@@ -262,7 +263,13 @@ f2 = axs[1].hist(im_norm_t1.flatten(), bins=64, range=(np.min(im_norm_t1),np.max
 axs[0].set_title('Image T1 new norm')
 axs[1].set_title('Image T1 old Norm')
 
+#####
 
+fig, axs = plt.subplots(2, 1, constrained_layout=True)
+f1 = axs[0].hist(img_norm.flatten(), bins=64, range=(0,1))
+f2 = axs[1].hist(im_norm_t1.flatten(), bins=64, range=(0,1))
+axs[0].set_title('Hist T1 : percent range 5-95')
+axs[1].set_title('Hist T1 : percent range 0-100')
 
 # #=============================================================================
 # # Using only one image as reference - uncomment so save the images in folder
