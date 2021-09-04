@@ -13,7 +13,9 @@ import os.path
 from os import path
 import torch 
 import torchvision 
-
+from sklearn.metrics import mean_absolute_error
+from skimage.metrics import peak_signal_noise_ratio
+from monai.transforms import GaussianSmooth, RandCropByPosNegLabel,ResizeWithPadOrCropd, ResizeWithPadOrCrop, AddChannel
 # =============================================================================
 # USING ALL DATA TO TRAIN HIST NORM - uncomment so save the images in folder
 # =============================================================================
@@ -546,22 +548,60 @@ import torchvision
 #     nib.save(nib.Nifti1Image(image_r, affine), os.path.join('E:/Master/PET-MR/PET-MR dataset/Helena-patientsonly-histnorm/remasked_patients/pet/', name_image))
 
 # #load images:
-im_rem_pet_p = nib.load('E:/Master/PET-MR/PET-MR dataset/Helena-patientsonly-histnorm/remasked_patients/pet/mMR_BR1_008_brain_aff_1mm.nii.gz')
-im_rem_t1_p = nib.load('E:/Master/PET-MR/PET-MR dataset/Helena-patientsonly-histnorm/remasked_patients/t1/mMR_BR1_008_brain_aff_1mm.nii.gz')
+# im_rem_pet_p = nib.load('E:/Master/PET-MR/PET-MR dataset/Helena-patientsonly-histnorm/remasked_patients/pet/mMR_BR1_008_brain_aff_1mm.nii.gz')
+# im_rem_t1_p = nib.load('E:/Master/PET-MR/PET-MR dataset/Helena-patientsonly-histnorm/remasked_patients/t1/mMR_BR1_008_brain_aff_1mm.nii.gz')
 
-im_pet_p = im_rem_pet_p.get_fdata()
-im_t1_p = im_rem_t1_p.get_fdata()
+# im_pet_p = im_rem_pet_p.get_fdata()
+# im_t1_p = im_rem_t1_p.get_fdata()
 
 
-#plot images:
-fig= plt.figure()
-ax = fig.add_subplot(1, 2, 1)
-plt.imshow(im_pet_p[:,:,90], cmap="gray")
-ax.set_title('PET remasked')
-ax.get_xaxis().set_visible(False)
-ax.get_yaxis().set_visible(False)
-ax = fig.add_subplot(1, 2, 2)
-plt.imshow(im_t1_p[:,:,90], cmap="gray")
-ax.set_title('T1 remasked')
-ax.get_xaxis().set_visible(False)
-ax.get_yaxis().set_visible(False)
+# #plot images:
+# fig= plt.figure()
+# ax = fig.add_subplot(1, 2, 1)
+# plt.imshow(im_pet_p[:,:,90], cmap="gray")
+# ax.set_title('PET remasked')
+# ax.get_xaxis().set_visible(False)
+# ax.get_yaxis().set_visible(False)
+# ax = fig.add_subplot(1, 2, 2)
+# plt.imshow(im_t1_p[:,:,90], cmap="gray")
+# ax.set_title('T1 remasked')
+# ax.get_xaxis().set_visible(False)
+# ax.get_yaxis().set_visible(False)
+
+## get MAE, PSNR 
+# im = nib.load('D:/6.Helena/Norm_data_aff_1mm/remasked_data/patients/t1/mMR_BR1_047_brain_aff_1mm.nii.gz')
+# affine= im.affine
+# im_or = im.get_fdata()
+# add_channel= AddChannel()
+# r_im = ResizeWithPadOrCrop(spatial_size=(160,200,160))
+# im_ch=add_channel(im_or)
+# im_crop=r_im(im_ch)
+# im_crop=np.squeeze(im_crop)
+# nib.save(nib.Nifti1Image(im_crop, affine), os.path.join('D:/6.Helena/masks_regions/', "im_or_crop_t1_047.nii"))
+
+
+im_pet_047 = nib.load('C:/Users/helen/OneDrive/Área de Trabalho/meeting-18-08-test047-066/new_patch_sampler_results/results-p64-5000ep/test066_MR-PET-/test_gen_PET.nii')
+im_t1_047 = nib.load('C:/Users/helen/OneDrive/Área de Trabalho/meeting-18-08-test047-066/new_patch_sampler_results/results-p64-5000ep/test066_MR-PET-/test_gen_MR.nii')
+
+im_pet_or_047 = nib.load('D:/6.Helena/masks_regions/image_or_pet_crop_066.nii')
+im_t1_or_047 = nib.load('D:/6.Helena/masks_regions/image_or_t1_crop_066.nii')
+
+im_pet_re_47 = im_pet_047.get_fdata()
+im_t1_re_47 = im_t1_047.get_fdata()
+
+im_pet_or_47 = im_pet_or_047.get_fdata()
+im_t1_or_47 = im_t1_or_047.get_fdata()
+
+im_t1_re_47 = np.ndarray.flatten(im_t1_re_47)
+im_t1_or_47= np.ndarray.flatten(im_t1_or_47)
+im_pet_re_47 = np.ndarray.flatten(im_pet_re_47)
+im_pet_or_47 = np.ndarray.flatten(im_pet_or_47)
+
+MAE_MR = mean_absolute_error(im_t1_re_47,im_t1_or_47)
+print(MAE_MR)
+MAE_PET = mean_absolute_error(im_pet_re_47,im_pet_or_47)
+print(MAE_PET)
+PSNR_MR = peak_signal_noise_ratio(im_t1_re_47,im_t1_or_47)
+print(PSNR_MR)
+PSNR_PET = peak_signal_noise_ratio(im_pet_re_47,im_pet_or_47)
+print(PSNR_PET)
