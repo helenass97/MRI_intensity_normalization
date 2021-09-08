@@ -580,11 +580,11 @@ from monai.transforms import GaussianSmooth, RandCropByPosNegLabel,ResizeWithPad
 # nib.save(nib.Nifti1Image(im_crop, affine), os.path.join('D:/6.Helena/masks_regions/', "im_or_crop_t1_047.nii"))
 
 
-im_pet_047 = nib.load('C:/Users/helen/OneDrive/Área de Trabalho/meeting-18-08-test047-066/new_patch_sampler_results/results-p64-5000ep/test066_MR-PET-/test_gen_PET.nii')
-im_t1_047 = nib.load('C:/Users/helen/OneDrive/Área de Trabalho/meeting-18-08-test047-066/new_patch_sampler_results/results-p64-5000ep/test066_MR-PET-/test_gen_MR.nii')
+im_pet_047 = nib.load('C:/Users/helen/OneDrive/Área de Trabalho/meeting-18-08-test047-066/new_patch_sampler_results/results_p32_5000ep/test047/test_gen_PET.nii')
+im_t1_047 = nib.load('C:/Users/helen/OneDrive/Área de Trabalho/meeting-18-08-test047-066/new_patch_sampler_results/results_p32_5000ep/test047/test_gen_MR.nii')
 
-im_pet_or_047 = nib.load('D:/6.Helena/masks_regions/image_or_pet_crop_066.nii')
-im_t1_or_047 = nib.load('D:/6.Helena/masks_regions/image_or_t1_crop_066.nii')
+im_pet_or_047 = nib.load('D:/6.Helena/masks_regions/image_or_pet_crop_047.nii')
+im_t1_or_047 = nib.load('D:/6.Helena/masks_regions/im_or_crop_t1_047.nii')
 
 im_pet_re_47 = im_pet_047.get_fdata()
 im_t1_re_47 = im_t1_047.get_fdata()
@@ -605,3 +605,13 @@ PSNR_MR = peak_signal_noise_ratio(im_t1_re_47,im_t1_or_47)
 print(PSNR_MR)
 PSNR_PET = peak_signal_noise_ratio(im_pet_re_47,im_pet_or_47)
 print(PSNR_PET)
+
+
+# =============================================================================
+#  Scale between 0-1  
+# =============================================================================
+
+#Normalized Data
+normalized = (x-min(x))/(max(x)-min(x))
+
+
