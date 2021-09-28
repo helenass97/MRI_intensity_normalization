@@ -16,6 +16,158 @@ import torchvision
 from sklearn.metrics import mean_absolute_error
 from skimage.metrics import peak_signal_noise_ratio
 from monai.transforms import GaussianSmooth, RandCropByPosNegLabel,ResizeWithPadOrCropd, ResizeWithPadOrCrop, AddChannel
+
+# =============================================================================
+# Remove skull - multiply 
+# =============================================================================
+
+# directories for images and masks 
+dir_t1_p = 'E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/Affine_reg_MNI_1mm/patients/t1/'
+dir_pet_p = 'E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/Affine_reg_MNI_1mm/patients/pet/'
+dir_mask_p = 'E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/brain_mask_aff_using_brainwarp/'
+
+#function to smooth masks
+smooth_tr = GaussianSmooth()
+
+
+#T1
+names_t1_p = os.listdir(dir_t1_p)
+#PET
+names_pet_p = os.listdir(dir_pet_p) 
+
+#MASKS T1
+names_masks_p = os.listdir(dir_mask_p)
+names_masks_pet_p = os.listdir(dir_mask_p)
+
+
+# Remask background T1 of patients
+for i in range(len(names_t1_p)):
+    name_image= names_t1_p[i]
+    image = nib.load( dir_t1_p + name_image)
+    affine = image.affine
+    image = image.get_fdata()
+    
+    
+    name_mask = names_masks_p[i]
+    mask = nib.load(dir_mask_p + name_mask)
+    mask = mask.get_fdata()
+    
+    # smooth mask and use that to multiply 
+    mask = smooth_tr(mask).astype('float64')
+    
+    image_noskull = cv2.multiply(image, mask)
+
+    nib.save(nib.Nifti1Image(image_noskull, affine), os.path.join('E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/Affine_MNI_no_skull_bdil/patients/t1/', name_image))
+
+
+# Remask background PET of patients
+for i in range(len(names_pet_p)):
+    name_image= names_pet_p[i]
+    image = nib.load(dir_pet_p + name_image)
+    affine = image.affine
+    image = image.get_fdata()
+      
+    name_mask = names_masks_p[i]
+    mask = nib.load(dir_mask_p  + name_mask)
+    mask = mask.get_fdata()
+    
+    # smooth mask and use that to multiply 
+    mask = smooth_tr(mask).astype('float64')
+    
+    image_noskull = cv2.multiply(image, mask)
+
+    nib.save(nib.Nifti1Image(image_noskull, affine), os.path.join('E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/Affine_MNI_no_skull_bdil/patients/pet/', name_image))
+
+
+# Print images to see
+
+# im_pet_p = nib.load('E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/Affine_MNI_no_skull/patients/pet/mMR_BR1_002_aff_1mm.nii.gz')
+# im_t1_p = nib.load('E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/Affine_MNI_no_skull/patients/t1/mMR_BR1_002_aff_1mm.nii.gz')
+
+# im_pet = im_pet_p.get_fdata()
+# im_t1= im_t1_p.get_fdata()
+
+
+# #plot images:
+# fig= plt.figure()
+# ax = fig.add_subplot(1, 2, 1)
+# plt.imshow(im_pet[:,:,100], cmap="gray")
+# ax.set_title('PET norm controls')
+# ax.get_xaxis().set_visible(False)
+# ax.get_yaxis().set_visible(False)
+# ax = fig.add_subplot(1, 2, 2)
+# plt.imshow(im_t1[:,:,100], cmap="gray")
+# ax.set_title('T1 norm controls')
+# ax.get_xaxis().set_visible(False)
+# ax.get_yaxis().set_visible(False)
+
+
+
+
+# # =============================================================================
+# # Remask - dilate mask and then multiply 
+# # =============================================================================
+
+# # directories for images and masks 
+# dir_t1_p = 'E:/6.Helena/Norm_data_aff_1mm/patients/t1/'
+# dir_pet_p = 'E:/6.Helena/Norm_data_aff_1mm/patients/pet/'
+# dir_mask_t1_p = 'E:/6.Helena/Norm_data_aff_1mm/masks/patients/t1/'
+# dir_mask_pet_p = 'E:/6.Helena/Norm_data_aff_1mm/masks/patients/pet/'
+
+
+# #T1
+# names_t1_p = os.listdir(dir_t1_p)
+# #PET
+# names_pet_p = os.listdir(dir_pet_p) 
+
+# #MASKS T1
+# names_masks_p = os.listdir(dir_mask_t1_p)
+# names_masks_pet_p = os.listdir(dir_mask_pet_p)
+
+# #function to smooth masks
+# smooth_tr = GaussianSmooth()
+
+
+# # Remask background T1 of patients
+# for i in range(len(names_t1_p)):
+#     name_image= names_t1_p[i]
+#     image = nib.load( dir_t1_p + name_image)
+#     affine = image.affine
+#     image = image.get_fdata()
+    
+    
+#     name_mask = names_masks_p[i]
+#     mask = nib.load( dir_mask_t1_p + name_mask)
+#     mask = mask.get_fdata()
+    
+#     #smooth mask and use that to multiply 
+#     mask = smooth_tr(mask).astype('float64')
+    
+#     image_remask = cv2.multiply(image, mask)
+#     image_r= image_remask*(image_remask>0)
+#     nib.save(nib.Nifti1Image(image_r, affine), os.path.join('E:/6.Helena/Norm_data_aff_1mm/remasked_data/patients/t1/', name_image))
+
+
+# # Remask background PET of patients
+# for i in range(len(names_pet_p)):
+#     name_image= names_pet_p[i]
+#     image = nib.load(dir_pet_p + name_image)
+#     affine = image.affine
+#     image = image.get_fdata()
+      
+#     name_mask = names_masks_pet_p[i]
+#     mask = nib.load(dir_mask_pet_p  + name_mask)
+#     mask = mask.get_fdata()
+    
+#     #smooth mask and use that to multiply 
+#     mask = smooth_tr(mask).astype('float64')
+    
+#     image_remask = cv2.multiply(image, mask)
+#     image_r= image_remask*(image_remask>0) # all the neagtive values inside the mask go to 0 
+#     nib.save(nib.Nifti1Image(image_r, affine), os.path.join('E:/6.Helena/Norm_data_aff_1mm/remasked_data/patients/pet/', name_image))
+
+
+
 # =============================================================================
 # USING ALL DATA TO TRAIN HIST NORM - uncomment so save the images in folder
 # =============================================================================
@@ -580,38 +732,38 @@ from monai.transforms import GaussianSmooth, RandCropByPosNegLabel,ResizeWithPad
 # nib.save(nib.Nifti1Image(im_crop, affine), os.path.join('D:/6.Helena/masks_regions/', "im_or_crop_t1_047.nii"))
 
 
-im_pet_047 = nib.load('C:/Users/helen/OneDrive/Área de Trabalho/meeting-18-08-test047-066/new_patch_sampler_results/results_p32_5000ep/test047/test_gen_PET.nii')
-im_t1_047 = nib.load('C:/Users/helen/OneDrive/Área de Trabalho/meeting-18-08-test047-066/new_patch_sampler_results/results_p32_5000ep/test047/test_gen_MR.nii')
+# im_pet_047 = nib.load('C:/Users/helen/OneDrive/Área de Trabalho/meeting-18-08-test047-066/new_patch_sampler_results/results_p32_5000ep/test047/test_gen_PET.nii')
+# im_t1_047 = nib.load('C:/Users/helen/OneDrive/Área de Trabalho/meeting-18-08-test047-066/new_patch_sampler_results/results_p32_5000ep/test047/test_gen_MR.nii')
 
-im_pet_or_047 = nib.load('D:/6.Helena/masks_regions/image_or_pet_crop_047.nii')
-im_t1_or_047 = nib.load('D:/6.Helena/masks_regions/im_or_crop_t1_047.nii')
+# im_pet_or_047 = nib.load('D:/6.Helena/masks_regions/image_or_pet_crop_047.nii')
+# im_t1_or_047 = nib.load('D:/6.Helena/masks_regions/im_or_crop_t1_047.nii')
 
-im_pet_re_47 = im_pet_047.get_fdata()
-im_t1_re_47 = im_t1_047.get_fdata()
+# im_pet_re_47 = im_pet_047.get_fdata()
+# im_t1_re_47 = im_t1_047.get_fdata()
 
-im_pet_or_47 = im_pet_or_047.get_fdata()
-im_t1_or_47 = im_t1_or_047.get_fdata()
+# im_pet_or_47 = im_pet_or_047.get_fdata()
+# im_t1_or_47 = im_t1_or_047.get_fdata()
 
-im_t1_re_47 = np.ndarray.flatten(im_t1_re_47)
-im_t1_or_47= np.ndarray.flatten(im_t1_or_47)
-im_pet_re_47 = np.ndarray.flatten(im_pet_re_47)
-im_pet_or_47 = np.ndarray.flatten(im_pet_or_47)
+# im_t1_re_47 = np.ndarray.flatten(im_t1_re_47)
+# im_t1_or_47= np.ndarray.flatten(im_t1_or_47)
+# im_pet_re_47 = np.ndarray.flatten(im_pet_re_47)
+# im_pet_or_47 = np.ndarray.flatten(im_pet_or_47)
 
-MAE_MR = mean_absolute_error(im_t1_re_47,im_t1_or_47)
-print(MAE_MR)
-MAE_PET = mean_absolute_error(im_pet_re_47,im_pet_or_47)
-print(MAE_PET)
-PSNR_MR = peak_signal_noise_ratio(im_t1_re_47,im_t1_or_47)
-print(PSNR_MR)
-PSNR_PET = peak_signal_noise_ratio(im_pet_re_47,im_pet_or_47)
-print(PSNR_PET)
+# MAE_MR = mean_absolute_error(im_t1_re_47,im_t1_or_47)
+# print(MAE_MR)
+# MAE_PET = mean_absolute_error(im_pet_re_47,im_pet_or_47)
+# print(MAE_PET)
+# PSNR_MR = peak_signal_noise_ratio(im_t1_re_47,im_t1_or_47)
+# print(PSNR_MR)
+# PSNR_PET = peak_signal_noise_ratio(im_pet_re_47,im_pet_or_47)
+# print(PSNR_PET)
 
 
-# =============================================================================
-#  Scale between 0-1  
-# =============================================================================
+# # =============================================================================
+# #  Scale between 0-1  
+# # =============================================================================
 
-#Normalized Data
-normalized = (x-min(x))/(max(x)-min(x))
+# #Normalized Data
+# normalized = (x-min(x))/(max(x)-min(x))
 
 
