@@ -2,7 +2,7 @@
 # Histogram Normalization 
 import os
 import cv2
-
+import scipy
 import numpy as np
 from monai.transforms import GaussianSmooth
 import nibabel as nib
@@ -20,19 +20,29 @@ from monai.transforms import GaussianSmooth, RandCropByPosNegLabel,ResizeWithPad
 # =============================================================================
 # Remove skull - multiply 
 # =============================================================================
+# Save masks dilated to remove skull
+
+# #try dilating mask
+# mask_load = nib.load('C:/Users/helen/Data/Reg_skull/brain_mask_to_BET_final/mask_034_dill.nii.gz')
+# affine= mask_load.affine
+# mask= mask_load.get_fdata()
+
+# dil_mask = scipy.ndimage.morphology.binary_dilation(mask,iterations=2, border_value=0).astype('float64')
+# dil_mask= scipy.ndimage.morphology.binary_fill_holes(dil_mask).astype('float64')
+
+# nib.save(nib.Nifti1Image(dil_mask, affine), os.path.join('C:/Users/helen/Data/Reg_skull/', 'mask_034_dill.nii.gz'))
+
 
 # # directories for images and masks 
-# dir_t1_p = 'E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/Affine_reg_MNI_1mm/patients/t1/'
-# dir_pet_p = 'E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/Affine_reg_MNI_1mm/patients/pet/'
-# dir_mask_p = 'E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/brain_mask_aff_using_brainwarp/'
+# dir_t1_p = 'C:/Users/helen/Data/Reg_skull/Affine_MNI_Skull_toBET/patients/t1/'
+# dir_pet_p = 'C:/Users/helen/Data/Reg_skull/Affine_MNI_Skull_toBET/patients/pet/'
+# dir_mask_p = 'C:/Users/helen/Data/Reg_skull/brain_mask_to_BET_final/'
 
 # #function to smooth masks
 # smooth_tr = GaussianSmooth()
 
-
-# #T1
+# #T1 and PET
 # names_t1_p = os.listdir(dir_t1_p)
-# #PET
 # names_pet_p = os.listdir(dir_pet_p) 
 
 # #MASKS T1
@@ -47,7 +57,6 @@ from monai.transforms import GaussianSmooth, RandCropByPosNegLabel,ResizeWithPad
 #     affine = image.affine
 #     image = image.get_fdata()
     
-    
 #     name_mask = names_masks_p[i]
 #     mask = nib.load(dir_mask_p + name_mask)
 #     mask = mask.get_fdata()
@@ -57,7 +66,7 @@ from monai.transforms import GaussianSmooth, RandCropByPosNegLabel,ResizeWithPad
     
 #     image_noskull = cv2.multiply(image, mask)
 
-#     nib.save(nib.Nifti1Image(image_noskull, affine), os.path.join('E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/Affine_MNI_no_skull_bdil/patients/t1/', name_image))
+#     nib.save(nib.Nifti1Image(image_noskull, affine), os.path.join('C:/Users/helen/Data/Reg_skull/Affine_MNI_Remasked/patients/t1/', name_image))
 
 
 # # Remask background PET of patients
@@ -76,7 +85,7 @@ from monai.transforms import GaussianSmooth, RandCropByPosNegLabel,ResizeWithPad
     
 #     image_noskull = cv2.multiply(image, mask)
 
-#     nib.save(nib.Nifti1Image(image_noskull, affine), os.path.join('E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/Affine_MNI_no_skull_bdil/patients/pet/', name_image))
+#     nib.save(nib.Nifti1Image(image_noskull, affine), os.path.join('C:/Users/helen/Data/Reg_skull/Affine_MNI_Remasked/patients/pet/', name_image))
 
 
 # Print images to see
@@ -219,12 +228,13 @@ from monai.transforms import GaussianSmooth, RandCropByPosNegLabel,ResizeWithPad
 
 #FOR PATIENTS - need to normalise it in respect to the controls 
 
-#dir_images="E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/Affine_reg_MNI_1mm/patients/t1/"
+# # FOR T1
+# dir_images="C:/Users/helen/Data/Reg_skull/Affine_MNI_Remasked/patients/t1/"
 # img_dir = os.listdir(dir_images)
 # dir_list=[]
 
 # #patients data to normalize
-# dir_images_save="E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/Affine_reg_MNI_1mm/patients/t1/"
+# dir_images_save="C:/Users/helen/Data/Reg_skull/Affine_MNI_Remasked/patients/t1/"
 
 # for i in range(len(img_dir)):
 #     im = dir_images + str(img_dir[i])
@@ -239,16 +249,16 @@ from monai.transforms import GaussianSmooth, RandCropByPosNegLabel,ResizeWithPad
 #     img = np.asanyarray(img.dataobj)
 #     img_norm = do_hist_normalization(img, perc, standard_scale) 
 #     #img_norm = img_norm / 100
-#     nib.save(nib.Nifti1Image(img_norm, affine), os.path.join('E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/Norm_hist_skull_affine/patients/t1/', filename)) 
+#     nib.save(nib.Nifti1Image(img_norm, affine), os.path.join('C:/Users/helen/Data/Reg_skull/Norm_affine_final/patients/t1/', filename)) 
 
 
 # # FOR PET 
-# dir_images="E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/Affine_reg_MNI_1mm/patients/pet/"
+# dir_images="C:/Users/helen/Data/Reg_skull/Affine_MNI_Remasked/patients/pet/"
 # img_dir = os.listdir(dir_images)
 # dir_list=[]
 
 # #patients data to normalize
-# dir_images_save="E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/Affine_reg_MNI_1mm/patients/pet/"
+# dir_images_save="C:/Users/helen/Data/Reg_skull/Affine_MNI_Remasked/patients/pet/"
 
 # for i in range(len(img_dir)):
 #     im = dir_images + str(img_dir[i])
@@ -263,7 +273,7 @@ from monai.transforms import GaussianSmooth, RandCropByPosNegLabel,ResizeWithPad
 #     img = np.asanyarray(img.dataobj)
 #     img_norm = do_hist_normalization(img, perc, standard_scale) 
 #     #img_norm = img_norm / 100
-#     nib.save(nib.Nifti1Image(img_norm, affine), os.path.join('E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/Norm_hist_skull_affine/patients/pet/', filename))
+#     nib.save(nib.Nifti1Image(img_norm, affine), os.path.join('C:/Users/helen/Data/Reg_skull/Norm_affine_final/patients/pet/', filename))
 
 
 #### Dont need:
@@ -310,16 +320,16 @@ from monai.transforms import GaussianSmooth, RandCropByPosNegLabel,ResizeWithPad
 
 # ## plot figures and histograms 
 
-# #load images:
+#load images:
 # im_norm_pet_p = nib.load('E:/6.Helena/Norm_data_aff_1mm/patients/pet/mMR_BR1_067_brain_aff_1mm.nii.gz')
 # im_norm_t1_p = nib.load('E:/6.Helena/Norm_data_aff_1mm/patients/t1/mMR_BR1_067_brain_aff_1mm.nii.gz')
 
-# im_norm_t1_c = nib.load('E:/6.Helena/Norm_data_aff_1mm/controls/t1/AZAIS_brain_aff_1mm.nii.gz')
-# im_norm_pet_c = nib.load('E:/6.Helena/Norm_data_aff_1mm/controls/pet/AZAIS_brain_aff_1mm.nii.gz')
+# # im_norm_t1_c = nib.load('E:/6.Helena/Norm_data_aff_1mm/controls/t1/AZAIS_brain_aff_1mm.nii.gz')
+# # im_norm_pet_c = nib.load('E:/6.Helena/Norm_data_aff_1mm/controls/pet/AZAIS_brain_aff_1mm.nii.gz')
 
-# #controls
-# im_norm_pet_c = im_norm_pet_c.get_fdata()
-# im_norm_t1_c = im_norm_t1_c.get_fdata()
+# # #controls
+# # im_norm_pet_c = im_norm_pet_c.get_fdata()
+# # im_norm_t1_c = im_norm_t1_c.get_fdata()
 
 # #patients
 # im_norm_pet_p = im_norm_pet_p.get_fdata()
@@ -368,11 +378,6 @@ from monai.transforms import GaussianSmooth, RandCropByPosNegLabel,ResizeWithPad
 # f2 = axs[1].hist(im_norm_t1_p.flatten(), bins=64, range=(0,1))
 # axs[0].set_title('PET patients')
 # axs[1].set_title('T1 patients')
-
-
-
-
-
 
 
 
@@ -643,16 +648,14 @@ from monai.transforms import GaussianSmooth, RandCropByPosNegLabel,ResizeWithPad
 # =============================================================================
 # directories for images and masks 
 
-# dir_t1_p = 'E:/Master/PET-MR/PET-MR dataset/Helena-patientsonly-histnorm/patients/t1/'
-# dir_pet_p = 'E:/Master/PET-MR/PET-MR dataset/Helena-patientsonly-histnorm/patients/pet/'
+# dir_t1_p = 'C:/Users/helen/Data/Reg_skull/Norm_affine_final/patients/t1/'
+# dir_pet_p = 'C:/Users/helen/Data/Reg_skull/Norm_affine_final/patients/pet/'
 
-# dir_mask_t1_p = 'D:/6.Helena/Norm_data_aff_1mm/masks/patients/t1/'
-# dir_mask_pet_p = 'D:/6.Helena/Norm_data_aff_1mm/masks/patients/pet/'
+# dir_mask_t1_p = 'C:/Users/helen/Data/Reg_skull/brain_mask_to_BET_final/'
+# dir_mask_pet_p = 'C:/Users/helen/Data/Reg_skull/brain_mask_to_BET_final/'
 
-# # #T1
+# # T1 and PET 
 # names_t1_p = os.listdir(dir_t1_p)
-
-# # #PET
 # names_pet_p = os.listdir(dir_pet_p) 
 
 # # MASKS 
@@ -679,7 +682,7 @@ from monai.transforms import GaussianSmooth, RandCropByPosNegLabel,ResizeWithPad
     
 #     image_remask = cv2.multiply(image, mask)
 #     image_r= image_remask*(image_remask>0)
-#     nib.save(nib.Nifti1Image(image_r, affine), os.path.join('E:/Master/PET-MR/PET-MR dataset/Helena-patientsonly-histnorm/remasked_patients/t1/', name_image))
+#     nib.save(nib.Nifti1Image(image_r, affine), os.path.join('C:/Users/helen/Data/Reg_skull/Remask_norm_hist_mni_final/patients/t1/', name_image))
 
 # # Remask background PET of patients
 # for i in range(len(names_pet_p)):
@@ -697,7 +700,8 @@ from monai.transforms import GaussianSmooth, RandCropByPosNegLabel,ResizeWithPad
     
 #     image_remask = cv2.multiply(image, mask)
 #     image_r= image_remask*(image_remask>0) # all the neagtive values inside the mask go to 0 
-#     nib.save(nib.Nifti1Image(image_r, affine), os.path.join('E:/Master/PET-MR/PET-MR dataset/Helena-patientsonly-histnorm/remasked_patients/pet/', name_image))
+#     nib.save(nib.Nifti1Image(image_r, affine), os.path.join('C:/Users/helen/Data/Reg_skull/Remask_norm_hist_mni_final/patients/pet/', name_image))
+
 
 # #load images:
 # im_rem_pet_p = nib.load('E:/Master/PET-MR/PET-MR dataset/Helena-patientsonly-histnorm/remasked_patients/pet/mMR_BR1_008_brain_aff_1mm.nii.gz')
@@ -763,78 +767,78 @@ from monai.transforms import GaussianSmooth, RandCropByPosNegLabel,ResizeWithPad
 # #  Scale between 0-1  
 # # =============================================================================
 
-# #Normalized Data
-# normalized = (x-min(x))/(max(x)-min(x))
+# # #Normalized Data
+# # normalized = (x-min(x))/(max(x)-min(x))
 
-def normalise_image(image):
-    '''
-    make image zero mean and unit standard deviation
-    '''
+# def normalise_image(image):
+#     '''
+#     make image zero mean and unit standard deviation
+#     '''
 
-    img_o = np.float32(image.copy())
-    m = np.mean(img_o)
-    s = np.std(img_o)
-    return np.divide((img_o - m), s)
+#     img_o = np.float32(image.copy())
+#     m = np.mean(img_o)
+#     s = np.std(img_o)
+#     return np.divide((img_o - m), s)
 
-def scale_image(image):
+# def scale_image(image):
 
-    image_norm = image/(image.max())
-    return image_norm
+#     image_norm = image/(image.max())
+#     return image_norm
 
 
-#FOR PATIENTS - need to normalise it in respect to the controls 
-# FOR T1
-dir_images="E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/Affine_reg_MNI_1mm/patients/t1/"
-img_dir = os.listdir(dir_images)
-dir_list=[]
+# #FOR PATIENTS - need to normalise it in respect to the controls 
+# # FOR T1
+# dir_images="E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/Affine_reg_MNI_1mm/patients/t1/"
+# img_dir = os.listdir(dir_images)
+# dir_list=[]
 
-#patients data to normalize
-dir_images_save="E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/Affine_reg_MNI_1mm/patients/t1/"
+# #patients data to normalize
+# dir_images_save="E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/Affine_reg_MNI_1mm/patients/t1/"
 
-for i in range(len(img_dir)):
-    im = dir_images + str(img_dir[i])
-    dir_list.append(im)
+# for i in range(len(img_dir)):
+#     im = dir_images + str(img_dir[i])
+#     dir_list.append(im)
 
-standard_scale, perc = nyul_train_standard_scale(dir_list)
+# standard_scale, perc = nyul_train_standard_scale(dir_list)
 
-for filename in sorted(os.listdir(dir_images_save)):
-    img = dir_images_save + filename 
-    img = nib.load(img)
-    affine = img.affine
-    img = np.asanyarray(img.dataobj)
+# for filename in sorted(os.listdir(dir_images_save)):
+#     img = dir_images_save + filename 
+#     img = nib.load(img)
+#     affine = img.affine
+#     img = np.asanyarray(img.dataobj)
     
-    img_norm = do_hist_normalization(img, perc, standard_scale)
-    img_scale = scale_image(img_norm)
+#     img_norm = do_hist_normalization(img, perc, standard_scale)
+#     img_scale = scale_image(img_norm)
     
-    nib.save(nib.Nifti1Image(img_scale, affine), os.path.join('E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/Norm_0-1_skull_affine/patients/t1/', filename))
+#     nib.save(nib.Nifti1Image(img_scale, affine), os.path.join('E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/Norm_0-1_skull_affine/patients/t1/', filename))
 
 
-# FOR PET 
-dir_images="E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/Affine_reg_MNI_1mm/patients/pet/"
-img_dir = os.listdir(dir_images)
-dir_list=[]
+# # FOR PET 
+# dir_images="E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/Affine_reg_MNI_1mm/patients/pet/"
+# img_dir = os.listdir(dir_images)
+# dir_list=[]
 
-#patients data to normalize
-dir_images_save="E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/Affine_reg_MNI_1mm/patients/pet/"
+# #patients data to normalize
+# dir_images_save="E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/Affine_reg_MNI_1mm/patients/pet/"
 
-for i in range(len(img_dir)):
-    im = dir_images + str(img_dir[i])
-    dir_list.append(im)
+# for i in range(len(img_dir)):
+#     im = dir_images + str(img_dir[i])
+#     dir_list.append(im)
     
-standard_scale, perc = nyul_train_standard_scale(dir_list)
+# standard_scale, perc = nyul_train_standard_scale(dir_list)
 
     
-for filename in sorted(os.listdir(dir_images_save)):
-    img = dir_images_save + filename 
-    img = nib.load(img)
-    affine = img.affine
-    img = np.asanyarray(img.dataobj)
+# for filename in sorted(os.listdir(dir_images_save)):
+#     img = dir_images_save + filename 
+#     img = nib.load(img)
+#     affine = img.affine
+#     img = np.asanyarray(img.dataobj)
     
 
-    #img_norm = normalise_image(img_scale) 
-    img_norm = do_hist_normalization(img, perc, standard_scale)
-    img_scale = scale_image(img_norm)
+#     #img_norm = normalise_image(img_scale) 
+#     img_norm = do_hist_normalization(img, perc, standard_scale)
+#     img_scale = scale_image(img_norm)
     
-    nib.save(nib.Nifti1Image(img_scale, affine), os.path.join('E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/Norm_0-1_skull_affine/patients/pet/', filename))
+#     nib.save(nib.Nifti1Image(img_scale, affine), os.path.join('E:/Master/PET-MR/PET-MR dataset/New_Reg_noBET/Norm_0-1_skull_affine/patients/pet/', filename))
 
 
