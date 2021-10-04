@@ -22,15 +22,15 @@ from monai.transforms import GaussianSmooth, RandCropByPosNegLabel,ResizeWithPad
 # =============================================================================
 # Save masks dilated to remove skull
 
-# #try dilating mask
-# mask_load = nib.load('C:/Users/helen/Data/Reg_skull/brain_mask_to_BET_final/mask_034_dill.nii.gz')
-# affine= mask_load.affine
-# mask= mask_load.get_fdata()
+#try dilating mask
+mask_load = nib.load('C:/Users/helen/Data/mask_aff_034_cereb.nii.gz')
+affine= mask_load.affine
+mask= mask_load.get_fdata()
 
-# dil_mask = scipy.ndimage.morphology.binary_dilation(mask,iterations=2, border_value=0).astype('float64')
-# dil_mask= scipy.ndimage.morphology.binary_fill_holes(dil_mask).astype('float64')
+dil_mask = scipy.ndimage.morphology.binary_dilation(mask,iterations=15, border_value=0).astype('float64')
+dil_mask= scipy.ndimage.morphology.binary_fill_holes(dil_mask).astype('float64')
 
-# nib.save(nib.Nifti1Image(dil_mask, affine), os.path.join('C:/Users/helen/Data/Reg_skull/', 'mask_034_dill.nii.gz'))
+nib.save(nib.Nifti1Image(dil_mask, affine), os.path.join('C:/Users/helen/Data/Reg_skull/', 'mask_034_cereb_dill.nii.gz'))
 
 
 # # directories for images and masks 
