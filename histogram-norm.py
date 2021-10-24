@@ -20,34 +20,34 @@ from monai.transforms import GaussianSmooth, RandCropByPosNegLabel,ResizeWithPad
 # =============================================================================
 # Remove skull - multiply 
 # =============================================================================
-# Save masks dilated to remove skull
+# # Save masks dilated to remove skull
 
-#try dilating mask
-mask_load = nib.load('C:/Users/helen/Data/mask_aff_034_cereb.nii.gz')
-affine= mask_load.affine
-mask= mask_load.get_fdata()
+# #try dilating mask
+# mask_load = nib.load('C:/Users/helen/Data/mask_aff_034_cereb.nii.gz')
+# affine= mask_load.affine
+# mask= mask_load.get_fdata()
 
-dil_mask = scipy.ndimage.morphology.binary_dilation(mask,iterations=15, border_value=0).astype('float64')
-dil_mask= scipy.ndimage.morphology.binary_fill_holes(dil_mask).astype('float64')
+# #dil_mask = scipy.ndimage.morphology.binary_dilation(mask,iterations=15, border_value=0).astype('float64')
+# dil_mask= scipy.ndimage.morphology.binary_fill_holes(mask).astype('float64')
 
-nib.save(nib.Nifti1Image(dil_mask, affine), os.path.join('C:/Users/helen/Data/Reg_skull/', 'mask_034_cereb_dill.nii.gz'))
+# nib.save(nib.Nifti1Image(mask, affine), os.path.join('C:/Users/helen/Data/Reg_skull/', 'mask_034_cereb_dill.nii.gz'))
 
 
-# # directories for images and masks 
-# dir_t1_p = 'C:/Users/helen/Data/Reg_skull/Affine_MNI_Skull_toBET/patients/t1/'
-# dir_pet_p = 'C:/Users/helen/Data/Reg_skull/Affine_MNI_Skull_toBET/patients/pet/'
-# dir_mask_p = 'C:/Users/helen/Data/Reg_skull/brain_mask_to_BET_final/'
+# directories for images and masks 
+dir_t1_p = 'E:/Master/PET-MR/PET-MR-Controls/Affine_1mm_to_remask/controls/t1/'
+dir_pet_p = 'E:/Master/PET-MR/PET-MR-Controls/Affine_1mm_to_remask/controls/pet/'
+dir_mask_p = 'E:/Master/PET-MR/PET-MR-Controls/Brain_mask_affine_remask/controls/'
 
-# #function to smooth masks
-# smooth_tr = GaussianSmooth()
+#function to smooth masks
+smooth_tr = GaussianSmooth()
 
-# #T1 and PET
-# names_t1_p = os.listdir(dir_t1_p)
-# names_pet_p = os.listdir(dir_pet_p) 
+#T1 and PET
+names_t1_p = os.listdir(dir_t1_p)
+names_pet_p = os.listdir(dir_pet_p) 
 
-# #MASKS T1
-# names_masks_p = os.listdir(dir_mask_p)
-# names_masks_pet_p = os.listdir(dir_mask_p)
+#MASKS T1
+names_masks_p = os.listdir(dir_mask_p)
+names_masks_pet_p = os.listdir(dir_mask_p)
 
 
 # # Remask background T1 of patients
@@ -61,12 +61,15 @@ nib.save(nib.Nifti1Image(dil_mask, affine), os.path.join('C:/Users/helen/Data/Re
 #     mask = nib.load(dir_mask_p + name_mask)
 #     mask = mask.get_fdata()
     
+#     #fill mask
+#     mask_nohole= scipy.ndimage.morphology.binary_fill_holes(mask).astype('float64')
+    
 #     # smooth mask and use that to multiply 
-#     mask = smooth_tr(mask).astype('float64')
+#     mask = smooth_tr(mask_nohole).astype('float64')
     
 #     image_noskull = cv2.multiply(image, mask)
 
-#     nib.save(nib.Nifti1Image(image_noskull, affine), os.path.join('C:/Users/helen/Data/Reg_skull/Affine_MNI_Remasked/patients/t1/', name_image))
+#     nib.save(nib.Nifti1Image(image_noskull, affine), os.path.join('E:/Master/PET-MR/PET-MR-Controls/Affine_remasked/controls/t1/', name_image))
 
 
 # # Remask background PET of patients
@@ -80,12 +83,15 @@ nib.save(nib.Nifti1Image(dil_mask, affine), os.path.join('C:/Users/helen/Data/Re
 #     mask = nib.load(dir_mask_p  + name_mask)
 #     mask = mask.get_fdata()
     
+#     #fill mask
+#     mask_nohole= scipy.ndimage.morphology.binary_fill_holes(mask).astype('float64')
+    
 #     # smooth mask and use that to multiply 
-#     mask = smooth_tr(mask).astype('float64')
+#     mask = smooth_tr(mask_nohole).astype('float64')
     
 #     image_noskull = cv2.multiply(image, mask)
 
-#     nib.save(nib.Nifti1Image(image_noskull, affine), os.path.join('C:/Users/helen/Data/Reg_skull/Affine_MNI_Remasked/patients/pet/', name_image))
+#     nib.save(nib.Nifti1Image(image_noskull, affine), os.path.join('E:/Master/PET-MR/PET-MR-Controls/Affine_remasked/controls/pet/', name_image))
 
 
 # Print images to see
