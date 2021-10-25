@@ -18,19 +18,80 @@ from skimage.metrics import peak_signal_noise_ratio
 from monai.transforms import GaussianSmooth, RandCropByPosNegLabel,ResizeWithPadOrCropd, ResizeWithPadOrCrop, AddChannel
 
 # =============================================================================
+# Divide by max - to scale
+# =============================================================================
+
+dir_t1_p = 'C:/Users/helen/Data/Reg_skull/Affine_MNI_Remasked/patients/t1/'
+dir_pet_p = 'C:/Users/helen/Data/Reg_skull/Affine_MNI_Remasked/patients/pet/'
+
+# T1 and PET
+names_t1_p = os.listdir(dir_t1_p)
+names_pet_p = os.listdir(dir_pet_p)
+ 
+def scale_image(image):
+
+    image_norm = image/(image.max())
+    return image_norm
+
+
+# T1 of patients - scale:
+for i in range(len(names_t1_p)):
+    name_image= names_t1_p[i]
+    image = nib.load( dir_t1_p + name_image)
+    affine = image.affine
+    image = image.get_fdata()
+    
+    img_scale = scale_image(image)
+
+    nib.save(nib.Nifti1Image(img_scale, affine), os.path.join('C:/Users/helen/Data/Reg_skull/Norm_scale_data/t1/', name_image))
+
+# PET of patients - scale:
+for i in range(len(names_pet_p)):
+    name_image= names_pet_p[i]
+    image = nib.load( dir_pet_p + name_image)
+    affine = image.affine
+    image = image.get_fdata()
+    
+    img_scale = scale_image(image)
+
+    nib.save(nib.Nifti1Image(img_scale, affine), os.path.join('C:/Users/helen/Data/Reg_skull/Norm_scale_data/pet/', name_image))
+
+
+# =============================================================================
 # Remove skull - multiply 
 # =============================================================================
 # Save masks dilated to remove skull
 
-#try dilating mask
-mask_load = nib.load('C:/Users/helen/Data/mask_aff_034_cereb.nii.gz')
-affine= mask_load.affine
-mask= mask_load.get_fdata()
+# #try dilating mask
+# mask_load = nib.load('C:/Users/helen/Data/mask_aff_044.nii.gz')
+# affine= mask_load.affine
+# mask= mask_load.get_fdata()
+# #smooth_tr = GaussianSmooth()
 
-dil_mask = scipy.ndimage.morphology.binary_dilation(mask,iterations=15, border_value=0).astype('float64')
-dil_mask= scipy.ndimage.morphology.binary_fill_holes(dil_mask).astype('float64')
+# #smooth_mask = smooth_tr(mask)
+# dil_mask = scipy.ndimage.morphology.binary_dilation(mask,iterations=4, border_value=0).astype('float64')
+# #dil_mask= scipy.ndimage.morphology.binary_fill_holes(dil_mask).astype('float64')
 
-nib.save(nib.Nifti1Image(dil_mask, affine), os.path.join('C:/Users/helen/Data/Reg_skull/', 'mask_034_cereb_dill.nii.gz'))
+# nib.save(nib.Nifti1Image(dil_mask, affine), os.path.join('C:/Users/helen/Data/Reg_skull/', 'mask_044_dill.nii.gz'))
+
+# =============================================================================
+# Invert Mask (to get healthy regions of brain) to try Patch-Sampler
+# =============================================================================
+
+# image_l = nib.load('D:/6.Helena/Norm_data_aff_1mm/remasked_data/patients/t1/mMR_BR1_066_brain_aff_1mm.nii.gz')
+# image = image_l.get_fdata()
+# affine_i= image_l.affine
+
+# mask_l = nib.load('D:/6.Helena/masks_regions/masks_new_15-08/masks_inv_healthy/mask_aff_047.nii.gz')
+# mask = mask_l.get_fdata()
+# affine_m = mask_l.affine
+
+## Just to try on Patch-sampler
+# mask_inv = -(mask - 1)
+# mask_inv = image * (-(mask - 1))
+
+
+
 
 
 # # directories for images and masks 
@@ -181,7 +242,7 @@ nib.save(nib.Nifti1Image(dil_mask, affine), os.path.join('C:/Users/helen/Data/Re
 # USING ALL DATA TO TRAIN HIST NORM - uncomment so save the images in folder
 # =============================================================================
 
-# #FOR CONTROLS
+#FOR CONTROLS
 
 # #FOR T1 
 # dir_images="E:/6.Helena/Affine_reg_MNI_1mm/controls/t1/"
